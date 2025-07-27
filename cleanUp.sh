@@ -1,0 +1,59 @@
+# Create a .gitignore file
+cat > .gitignore << 'EOF'
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribution / packaging
+*.egg-info/
+dist/
+build/
+
+# Layer directories
+ml-layer/
+layer1/
+layer2/
+layer3/
+*-layer/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# ML specific
+*.pkl
+*.joblib
+*.h5
+*.npy
+
+# AWS
+*.zip
+response.json
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+EOF
+
+# Now add only YOUR files
+git add inference_lambda.py
+git add create_layers.sh
+git add create_lambda_with_layers.sh
+git add test_lambda.sh
+git add requirements.txt  # if you have one
+git add .gitignore
+
+# Check what will be committed
+git status
+
+# Then commit
+git commit -m "Initial commit with Lambda deployment scripts"
