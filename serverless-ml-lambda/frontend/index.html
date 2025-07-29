@@ -1,0 +1,258 @@
+cat > index.html << 'EOF'
+<!DOCTYPE html>
+<html>
+<head>
+    <title>House Price Predictor - ML Model Demo</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 5px;
+            text-align: center;
+            display: none;
+        }
+        .result.low { background: #e8f5e9; color: #2e7d32; }
+        .result.medium { background: #fff3e0; color: #f57c00; }
+        .result.high { background: #ffebee; color: #c62828; }
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .portfolio-link {
+            text-align: center;
+            margin-top: 30px;
+            color: #666;
+        }
+        .portfolio-link a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏠 House Price Category Predictor</h1>
+        <p class="subtitle">Machine Learning model deployed on AWS Lambda</p>
+
+        <form id="predictionForm">
+            <div class="form-group">
+                <label>Area (square feet):</label>
+                <input type="number" id="area" value="3000" required>
+            </div>
+
+            <div class="form-group">
+                <label>Number of Bedrooms:</label>
+                <input type="number" id="bedrooms" value="3" required>
+            </div>
+
+            <div class="form-group">
+                <label>Number of Bathrooms:</label>
+                <input type="number" id="bathrooms" value="2" required>
+            </div>
+
+            <div class="form-group">
+                <label>Number of Stories:</label>
+                <input type="number" id="stories" value="2" required>
+            </div>
+
+            <div class="form-group">
+                <label>Main Road Access:</label>
+                <select id="mainroad">
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Guest Room:</label>
+                <select id="guestroom">
+                    <option value="no">No</option>
+                    <option value="yes">Yes</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Basement:</label>
+                <select id="basement">
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Hot Water Heating:</label>
+                <select id="hotwaterheating">
+                    <option value="no">No</option>
+                    <option value="yes">Yes</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Air Conditioning:</label>
+                <select id="airconditioning">
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Parking Spaces:</label>
+                <input type="number" id="parking" value="2" required>
+            </div>
+
+            <div class="form-group">
+                <label>Preferred Area:</label>
+                <select id="prefarea">
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Furnishing Status:</label>
+                <select id="furnishingstatus">
+                    <option value="furnished">Furnished</option>
+                    <option value="semi-furnished">Semi-Furnished</option>
+                    <option value="unfurnished">Unfurnished</option>
+                </select>
+            </div>
+
+            <button type="submit" id="submitBtn">Predict Price Category</button>
+        </form>
+
+        <div class="loading">
+            <p>🔄 Making prediction...</p>
+        </div>
+
+        <div id="result" class="result"></div>
+
+        <div class="portfolio-link">
+            <p>Built by [Corina Rios] | <a href="https://github.com/yourusername/serverless-ml-lambda" target="_blank">View on GitHub</a></p>
+        </div>
+    </div>
+
+    <script>
+    const API_URL = ' https://bhsqlegngg.execute-api.eu-west-1.amazonaws.com/prod/predict';
+
+    document.getElementById('predictionForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        // Get form values
+        const data = {
+            area: parseInt(document.getElementById('area').value),
+            bedrooms: parseInt(document.getElementById('bedrooms').value),
+            bathrooms: parseInt(document.getElementById('bathrooms').value),
+            stories: parseInt(document.getElementById('stories').value),
+            mainroad: document.getElementById('mainroad').value,
+            guestroom: document.getElementById('guestroom').value,
+            basement: document.getElementById('basement').value,
+            hotwaterheating: document.getElementById('hotwaterheating').value,
+            airconditioning: document.getElementById('airconditioning').value,
+            parking: parseInt(document.getElementById('parking').value),
+            prefarea: document.getElementById('prefarea').value,
+            furnishingstatus: document.getElementById('furnishingstatus').value
+        };
+
+        // Show loading, hide result
+        document.querySelector('.loading').style.display = 'block';
+        document.getElementById('result').style.display = 'none';
+        document.getElementById('submitBtn').disabled = true;
+
+        try {
+            // Make API call
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+
+            // Show result
+            const resultDiv = document.getElementById('result');
+            resultDiv.className = 'result ' + result.price_category;
+            resultDiv.innerHTML = `
+                <h2>Predicted Price Category</h2>
+                <h1 style="font-size: 48px; margin: 20px 0;">
+                    ${result.price_category.toUpperCase()}
+                </h1>
+                <p>Based on the provided house features</p>
+            `;
+            resultDiv.style.display = 'block';
+
+        } catch (error) {
+            alert('Error: Could not get prediction. Please try again.');
+            console.error('Error:', error);
+        } finally {
+            // Hide loading, enable button
+            document.querySelector('.loading').style.display = 'none';
+            document.getElementById('submitBtn').disabled = false;
+        }
+    });
+    </script>
+</body>
+</html>
+EOF
