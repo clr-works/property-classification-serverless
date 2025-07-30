@@ -1,4 +1,4 @@
-# 🏠 Property Price Classification — Serverless ML Deployment
+# 🏠 Property Quality Classification — Serverless ML Deployment
 
 This project demonstrates an end-to-end machine learning pipeline for **classifying housing prices into categories (low, medium, high)**, using a **serverless architecture** with **AWS Lambda**, **Docker**, and a modular project structure.
 
