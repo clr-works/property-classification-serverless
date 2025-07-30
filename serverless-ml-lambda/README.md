@@ -27,9 +27,8 @@ python model.py
 curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" \
   -d '{"features": [1200, 3, 2, 0.5, "urban", ...]}'
 
-# Create test payload
-cat > /tmp/test_payload.json << 'EOF'
+# Example test payload
 {
   "body": "{\"area\": 3000, \"bedrooms\": 3, \"bathrooms\": 2, \"stories\": 2, \"mainroad\": \"yes\", \"guestroom\": \"no\", \"basement\": \"yes\", \"hotwaterheating\": \"no\", \"airconditioning\": \"yes\", \"parking\": 2, \"prefarea\": \"yes\", \"furnishingstatus\": \"furnished\"}"
 }
-EOF
+
