@@ -4,21 +4,21 @@ This project demonstrates an end-to-end machine learning pipeline for **classify
 
 ---
 
-## 🔧 Project Structure
+## Project Structure
 
 
 ---
 
-## 🚀 Key Features
+## Key Features
 
-- 🎯 Random Forest classifier to categorize property prices.
-- 📦 Preprocessing.
-- 🐳 Dockerized Lambda function for serverless deployment.
-- 🧩 Modular structure: clean separation of model, Lambda, and deployment logic.
+-  Random Forest classifier to categorize property prices.
+-  Preprocessing.
+-  Dockerized Lambda function for serverless deployment.
+-  Modular structure: clean separation of model, Lambda, and deployment logic.
 
 ---
 
-## ⚙️ Setup & Usage
+## Setup & Usage
 
 ```bash
 cd model
