@@ -20,8 +20,6 @@ This project demonstrates an end-to-end machine learning pipeline for **classify
 
 ## ⚙️ Setup & Usage
 
-### 1. 📦 Train the Model
-
 ```bash
 cd model
 python model.py
